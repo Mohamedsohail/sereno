@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sereno Meta Ads — Performance Analysis & Perfect Plan</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d27; --card2: #222636;
+    --green: #00e676; --red: #ff5252; --yellow: #ffd740; --blue: #448aff;
+    --cyan: #18ffff; --purple: #b388ff; --orange: #ff9100;
+    --text: #e0e0e0; --text2: #9e9e9e; --border: #2a2e3a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  /* Header */
+  .header { text-align: center; padding: 40px 0 30px; border-bottom: 2px solid var(--border); margin-bottom: 30px; }
+  .header h1 { font-size: 2.2em; background: linear-gradient(135deg, var(--cyan), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header .sub { color: var(--text2); font-size: 1.1em; margin-top: 8px; }
+  .header .date { color: var(--yellow); font-size: 0.9em; margin-top: 4px; }
+
+  /* Section titles */
+  .section-title { font-size: 1.5em; color: var(--cyan); margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title .emoji { font-size: 1.2em; }
+
+  /* KPI Cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px; }
+  .kpi-card { background: var(--card); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid var(--border); }
+  .kpi-card .label { font-size: 0.8em; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .kpi-card .value { font-size: 2em; font-weight: 700; margin: 8px 0 4px; }
+  .kpi-card .bench { font-size: 0.75em; padding: 3px 8px; border-radius: 12px; display: inline-block; }
+  .good { color: var(--green); } .bad { color: var(--red); } .warn { color: var(--yellow); } .neutral { color: var(--blue); }
+  .bg-good { background: rgba(0,230,118,0.15); color: var(--green); }
+  .bg-bad { background: rgba(255,82,82,0.15); color: var(--red); }
+  .bg-warn { background: rgba(255,215,64,0.15); color: var(--yellow); }
+  .bg-neutral { background: rgba(68,138,255,0.15); color: var(--blue); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+  th { background: var(--card2); color: var(--cyan); font-weight: 600; text-transform: uppercase; font-size: 0.75em; letter-spacing: 1px; }
+  th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(68,138,255,0.05); }
+  .tag { padding: 3px 10px; border-radius: 6px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+  .tag-scale { background: rgba(0,230,118,0.2); color: var(--green); }
+  .tag-keep { background: rgba(68,138,255,0.2); color: var(--blue); }
+  .tag-monitor { background: rgba(255,215,64,0.2); color: var(--yellow); }
+  .tag-pause { background: rgba(255,82,82,0.2); color: var(--red); }
+
+  /* Charts */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+  .chart-card { background: var(--card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+  .chart-card h3 { color: var(--text); font-size: 1em; margin-bottom: 16px; }
+
+  /* Plan cards */
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 30px; }
+  .plan-card { background: var(--card); border-radius: 12px; padding: 24px; border-left: 4px solid var(--cyan); }
+  .plan-card.scale { border-left-color: var(--green); }
+  .plan-card.optimize { border-left-color: var(--yellow); }
+  .plan-card.pause { border-left-color: var(--red); }
+  .plan-card.new { border-left-color: var(--purple); }
+  .plan-card h4 { font-size: 1.1em; margin-bottom: 10px; }
+  .plan-card ul { padding-left: 20px; color: var(--text2); }
+  .plan-card ul li { margin-bottom: 6px; }
+
+  /* Budget table */
+  .budget-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 14px 20px; background: var(--card); border-radius: 10px; margin-bottom: 8px; align-items: center; }
+  .budget-row.header-row { background: var(--card2); font-weight: 600; color: var(--cyan); font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; }
+  .budget-total { background: linear-gradient(135deg, rgba(0,230,118,0.1), rgba(68,138,255,0.1)); border: 1px solid var(--green); }
+
+  /* Action items */
+  .action-list { background: var(--card); border-radius: 12px; padding: 24px; }
+  .action-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .action-item:last-child { border-bottom: none; }
+  .action-num { background: var(--blue); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85em; font-weight: 700; flex-shrink: 0; }
+  .action-item.critical .action-num { background: var(--red); }
+  .action-item.high .action-num { background: var(--orange); }
+
+  /* Campaign structure */
+  .structure-tree { background: var(--card); border-radius: 12px; padding: 24px; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 2; }
+  .structure-tree .campaign { color: var(--cyan); font-weight: 700; }
+  .structure-tree .adset { color: var(--blue); margin-left: 30px; }
+  .structure-tree .ad { color: var(--text2); margin-left: 60px; }
+  .structure-tree .tag-inline { font-family: 'Segoe UI', sans-serif; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .chart-grid, .plan-grid { grid-template-columns: 1fr; }
+    .budget-row { grid-template-columns: 1fr 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Alert box */
+  .alert { background: rgba(255,82,82,0.1); border: 1px solid var(--red); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+  .alert h4 { color: var(--red); margin-bottom: 8px; }
+  .alert-warn { background: rgba(255,215,64,0.1); border-color: var(--yellow); }
+  .alert-warn h4 { color: var(--yellow); }
+  .alert-good { background: rgba(0,230,118,0.1); border-color: var(--green); }
+  .alert-good h4 { color: var(--green); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>SERENO — Meta Ads Analysis & Perfect Plan</h1>
+  <div class="sub">Residential Villa Plots | Veppampattu, Chennai | Campaign: "Veppambattu 14 Launch"</div>
+  <div class="date">Data Period: Last 30 Days | Report Generated: March 30, 2026</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 1: CURRENT PERFORMANCE ANALYSIS -->
+<!-- ============================================================ -->
+
+<div class="section-title"><span class="emoji">📊</span> PART 1 — Current Performance Snapshot (Last 30 Days)</div>
+
+<!-- KPI Cards -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="label">Total Spend</div>
+    <div class="value neutral">₹1,50,407</div>
+    <div class="bench bg-neutral">₹5,014/day avg</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Total Leads</div>
+    <div class="value good">372</div>
+    <div class="bench bg-good">12.4 leads/day</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Cost Per Lead</div>
+    <div class="value bad">₹404</div>
+    <div class="bench bg-bad">Target: ₹350 | +15% over</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">CTR</div>
+    <div class="value warn">1.21%</div>
+    <div class="bench bg-warn">Good range (1.5-3%)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">CPC</div>
+    <div class="value good">₹19.73</div>
+    <div class="bench bg-good">Good (₹10-20 range)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">CPM</div>
+    <div class="value warn">₹239</div>
+    <div class="bench bg-warn">Good (₹150-300)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Reach</div>
+    <div class="value neutral">2,55,979</div>
+    <div class="bench bg-neutral">Unique people</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Frequency</div>
+    <div class="value bad">2.45</div>
+    <div class="bench bg-bad">ACTION NEEDED (>2.5)</div>
+  </div>
+</div>
+
+<!-- Critical Alerts -->
+<div class="alert">
+  <h4>🚨 CRITICAL: Frequency at 2.45 — Audience Fatigue Imminent</h4>
+  <p>Your audience is seeing ads 2.45 times on average. Above 2.5 = severe fatigue = rising CPL. This is the #1 reason your CPL is above target. You need to expand audiences or rotate creatives immediately.</p>
+</div>
+
+<div class="alert alert-warn">
+  <h4>⚠️ CPL at ₹404 — 15% Above ₹350 Target</h4>
+  <p>Overall CPL is ₹404 vs your ₹350 target. The main culprits: Thiruninravur (₹467 CPL) ad set is dragging the average up. Chengalpattu (₹442 CPL, 60km away) has been KILLED — too far from project, junk leads. Chennai (₹353) is close to target.</p>
+</div>
+
+<!-- Ad Set Performance Table -->
+<div class="section-title"><span class="emoji">🎯</span> Ad Set Performance Breakdown</div>
+<table>
+  <thead>
+    <tr><th>Ad Set</th><th>Spend</th><th>Leads</th><th>CPL</th><th>CTR</th><th>CPC</th><th>Verdict</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Chennai</strong></td><td>₹41,627</td><td>118</td>
+      <td class="good">₹353</td><td>1.27%</td><td>₹17.88</td>
+      <td><span class="tag tag-scale">SCALE</span></td>
+    </tr>
+    <tr>
+      <td><strong>Thiruvallur</strong></td><td>₹33,294</td><td>88</td>
+      <td class="warn">₹378</td><td>1.87%</td><td>₹14.01</td>
+      <td><span class="tag tag-keep">KEEP</span></td>
+    </tr>
+    <tr style="opacity: 0.5; text-decoration: line-through;">
+      <td><strong>Chengalpattu</strong> (60km away)</td><td>₹35,817</td><td>81</td>
+      <td class="bad">₹442</td><td>0.73%</td><td>₹38.62</td>
+      <td><span class="tag tag-pause">KILL — TOO FAR</span></td>
+    </tr>
+    <tr>
+      <td><strong>Thiruninravur</strong></td><td>₹39,672</td><td>85</td>
+      <td class="bad">₹467</td><td>1.50%</td><td>₹19.33</td>
+      <td><span class="tag tag-monitor">MONITOR</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Creative Performance Table -->
+<div class="section-title"><span class="emoji">🎨</span> Creative Performance (Your Existing Creatives — Ranked by CPL)</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>Creative</th><th>Spend</th><th>Leads</th><th>CPL</th><th>CTR</th><th>CPC</th><th>Verdict</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td><td><strong>Market Tamila Video</strong></td><td>₹11,472</td><td>34</td>
+      <td class="good">₹337</td><td>1.72%</td><td>₹12.97</td>
+      <td><span class="tag tag-scale">SCALE ↑↑</span></td>
+    </tr>
+    <tr>
+      <td>2</td><td><strong>Creatives 2</strong></td><td>₹19,319</td><td>54</td>
+      <td class="good">₹358</td><td>1.09%</td><td>₹24.78</td>
+      <td><span class="tag tag-scale">SCALE ↑</span></td>
+    </tr>
+    <tr>
+      <td>3</td><td><strong>Ad 1 sanjay sami</strong></td><td>₹85,618</td><td>205</td>
+      <td class="warn">₹418</td><td>0.96%</td><td>₹22.07</td>
+      <td><span class="tag tag-monitor">REDUCE SPEND</span></td>
+    </tr>
+    <tr>
+      <td>4</td><td><strong>Red land and Building</strong></td><td>₹32,971</td><td>77</td>
+      <td class="bad">₹428</td><td>2.12%</td><td>₹15.25</td>
+      <td><span class="tag tag-monitor">MONITOR</span></td>
+    </tr>
+    <tr>
+      <td>5</td><td><strong>Ad 1 Creatives</strong></td><td>₹1,019</td><td>2</td>
+      <td class="bad">₹510</td><td>1.07%</td><td>₹40.77</td>
+      <td><span class="tag tag-pause">PAUSE</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Best & Worst Combos -->
+<div class="section-title"><span class="emoji">🏆</span> Best & Worst Ad Set + Creative Combos</div>
+<div class="chart-grid">
+  <div class="chart-card" style="border-left: 4px solid var(--green);">
+    <h3 style="color: var(--green);">TOP 5 WINNERS (Lowest CPL)</h3>
+    <table>
+      <thead><tr><th>Creative × Ad Set</th><th>CPL</th><th>Leads</th></tr></thead>
+      <tbody>
+        <tr><td>Creatives 2 × Thiruvallur</td><td class="good">₹162</td><td>1</td></tr>
+        <tr><td>Market Tamila Video × Thiruninravur</td><td class="good">₹287</td><td>15</td></tr>
+        <tr><td>Market Tamila Video × Chennai</td><td class="good">₹315</td><td>16</td></tr>
+        <tr><td>Creatives 2 × Chennai</td><td class="good">₹320</td><td>34</td></tr>
+        <tr><td>Red land × Chennai</td><td class="good">₹341</td><td>9</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-card" style="border-left: 4px solid var(--red);">
+    <h3 style="color: var(--red);">BOTTOM 5 LOSERS (Highest CPL)</h3>
+    <table>
+      <thead><tr><th>Creative × Ad Set</th><th>CPL</th><th>Leads</th></tr></thead>
+      <tbody>
+        <tr><td>Market Tamila Video × Thiruvallur</td><td class="bad">₹786</td><td>2</td></tr>
+        <tr><td>Red land × Thiruninravur</td><td class="bad">₹690</td><td>14</td></tr>
+        <tr><td>Market Tamila Video × Chengalpattu</td><td class="bad">₹561</td><td>1</td></tr>
+        <tr><td>Ad 1 Creatives × Chengalpattu</td><td class="bad">₹510</td><td>2</td></tr>
+        <tr><td>Creatives 2 × Thiruninravur</td><td class="bad">₹459</td><td>3</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="chart-grid">
+  <div class="chart-card">
+    <h3>CPL by Ad Set</h3>
+    <canvas id="cplAdsetChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Spend Distribution by Creative</h3>
+    <canvas id="spendCreativeChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Leads by Ad Set</h3>
+    <canvas id="leadsAdsetChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>CPL by Creative (All Ad Sets)</h3>
+    <canvas id="cplCreativeChart"></canvas>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 2: THE PERFECT META ADS PLAN -->
+<!-- ============================================================ -->
+
+<div class="section-title" style="font-size: 1.8em; color: var(--green); border-bottom: 2px solid var(--green);">
+  <span class="emoji">🚀</span> PART 2 — The Perfect Meta Ads Plan for Sereno
+</div>
+
+<p style="color: var(--text2); margin-bottom: 30px; font-size: 1.05em;">
+  This plan uses ONLY your existing creatives. Budget: ₹2,00,000/month (~₹6,667/day). Objective: Lead Generation. Target CPL: Below ₹300.
+</p>
+
+<!-- CAMPAIGN STRUCTURE -->
+<div class="section-title"><span class="emoji">🏗️</span> New Campaign Structure (Replace Current Setup)</div>
+
+<div class="alert alert-good">
+  <h4>✅ Strategy: 3-Campaign Architecture</h4>
+  <p>Instead of 1 campaign with 4 ad sets, split into 3 campaigns by funnel stage. Chengalpattu KILLED (60km away = junk leads). Replaced with Avadi-Pattabiram (TIDEL Park corridor) and Poonamallee-Porur (price-sensitive buyers within 20km).</p>
+</div>
+
+<div class="structure-tree">
+  <div class="campaign">📁 CAMPAIGN 1: SERENO_LeadGen_ProvenGeos (₹4,000/day — 60% budget)</div>
+  <div class="adset">├── 📂 Ad Set: Chennai_Broad (₹1,334/day) — Age 25-55, 25km radius Chennai</div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Market Tamila Video <span class="tag-inline tag tag-scale">STAR</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-scale">STAR</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;└── ✅ Red land and Building <span class="tag-inline tag tag-keep">SUPPORT</span></div>
+  <br>
+  <div class="adset">├── 📂 Ad Set: Thiruvallur_Focused (₹1,333/day) — Age 25-55, Thiruvallur district</div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Market Tamila Video <span class="tag-inline tag tag-scale">STAR</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-scale">STAR</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;└── ✅ Red land and Building <span class="tag-inline tag tag-keep">SUPPORT</span></div>
+  <br>
+  <div class="adset">└── 📂 Ad Set: Thiruninravur_Optimized (₹1,333/day) — Age 25-55, Thiruninravur only</div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;├── ✅ Market Tamila Video <span class="tag-inline tag tag-scale">STAR — CPL ₹287 here!</span></div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-keep">SUPPORT</span></div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;└── ❌ Red land and Building <span class="tag-inline tag tag-pause">EXCLUDE — CPL ₹690 here</span></div>
+  <br>
+  <br>
+  <div class="campaign">📁 CAMPAIGN 2: SERENO_LeadGen_NewHighQualityGeos (₹1,500/day — 22.5% budget)</div>
+  <div class="adset">├── 📂 Ad Set: Avadi_Pattabiram_TIDEL (₹800/day) — Age 25-50, Avadi + Ambattur + Pattabiram (10-15km from site)</div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Market Tamila Video <span class="tag-inline tag tag-scale">STAR — Railway + TIDEL Park angle</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-scale">PROVEN</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;└── ✅ Red land and Building <span class="tag-inline tag tag-keep">TEST</span></div>
+  <br>
+  <div class="adset">└── 📂 Ad Set: Poonamallee_Porur (₹700/day) — Age 28-50, Poonamallee + Porur + Kundrathur (15-20km from site)</div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;├── ✅ Market Tamila Video <span class="tag-inline tag tag-scale">STAR — Price advantage angle</span></div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-keep">PROVEN</span></div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;└── ❌ Ad 1 sanjay sami <span class="tag-inline tag tag-pause">DO NOT USE</span></div>
+  <br>
+  <br>
+  <div class="campaign">📁 CAMPAIGN 3: SERENO_Retargeting (₹1,167/day — 17.5% budget)</div>
+  <div class="adset">├── 📂 Ad Set: Website_Visitors_30d (₹584/day)</div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-scale">BEST for warm audience</span></div>
+  <div class="ad">│&nbsp;&nbsp;&nbsp;└── ✅ Market Tamila Video <span class="tag-inline tag tag-keep">SUPPORT</span></div>
+  <br>
+  <div class="adset">└── 📂 Ad Set: Lead_Form_Openers_NotSubmitted (₹583/day)</div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;├── ✅ Creatives 2 <span class="tag-inline tag tag-scale">URGENCY ANGLE</span></div>
+  <div class="ad">&nbsp;&nbsp;&nbsp;&nbsp;└── ✅ Red land and Building <span class="tag-inline tag tag-keep">SOCIAL PROOF</span></div>
+</div>
+
+<!-- BUDGET ALLOCATION -->
+<div class="section-title"><span class="emoji">💰</span> Budget Allocation — ₹2,00,000/Month</div>
+
+<div class="budget-row header-row">
+  <div>Campaign / Ad Set</div><div>Daily Budget</div><div>Monthly Budget</div><div>% of Total</div>
+</div>
+<div class="budget-row">
+  <div><strong>Campaign 1: Proven Geos</strong></div><div>₹4,000</div><div>₹1,20,000</div><div>60%</div>
+</div>
+<div class="budget-row" style="margin-left: 20px; background: var(--card2);">
+  <div>&nbsp;&nbsp;→ Chennai_Broad</div><div>₹1,334</div><div>₹40,000</div><div>20%</div>
+</div>
+<div class="budget-row" style="margin-left: 20px; background: var(--card2);">
+  <div>&nbsp;&nbsp;→ Thiruvallur_Focused</div><div>₹1,333</div><div>₹40,000</div><div>20%</div>
+</div>
+<div class="budget-row" style="margin-left: 20px; background: var(--card2);">
+  <div>&nbsp;&nbsp;→ Thiruninravur_Optimized</div><div>₹1,333</div><div>₹40,000</div><div>20%</div>
+</div>
+<div class="budget-row">
+  <div><strong>Campaign 2: New High-Quality Geos</strong></div><div>₹1,500</div><div>₹45,000</div><div>22.5%</div>
+</div>
+<div class="budget-row" style="margin-left: 20px; background: var(--card2);">
+  <div>&nbsp;&nbsp;→ Avadi_Pattabiram_TIDEL</div><div>₹800</div><div>₹24,000</div><div>12%</div>
+</div>
+<div class="budget-row" style="margin-left: 20px; background: var(--card2);">
+  <div>&nbsp;&nbsp;→ Poonamallee_Porur</div><div>₹700</div><div>₹21,000</div><div>10.5%</div>
+</div>
+<div class="budget-row">
+  <div><strong>Campaign 3: Retargeting</strong></div><div>₹1,167</div><div>₹35,000</div><div>17.5%</div>
+</div>
+<div class="budget-row budget-total">
+  <div><strong>TOTAL</strong></div><div><strong>₹6,667</strong></div><div><strong>₹2,00,000</strong></div><div><strong>100%</strong></div>
+</div>
+
+<!-- CREATIVE STRATEGY -->
+<div class="section-title"><span class="emoji">🎨</span> Creative Strategy — Using Your Existing Creatives Only</div>
+
+<div class="plan-grid">
+  <div class="plan-card scale">
+    <h4 style="color: var(--green);">🌟 HERO #1: Market Tamila Video</h4>
+    <p style="margin-bottom: 10px;"><strong>CPL: ₹337 | Best performer</strong></p>
+    <ul>
+      <li><strong>Deploy in:</strong> ALL 3 top-performing ad sets (Chennai, Thiruvallur, Thiruninravur)</li>
+      <li><strong>Why it works:</strong> Video format + Tamil language = highest engagement. Best CPC (₹12.97) across all creatives</li>
+      <li><strong>Action:</strong> This creative is currently under-spent (only ₹11K of ₹1.5L). It must get 40%+ of impressions in Campaign 1</li>
+      <li><strong>Budget share:</strong> Should receive ~₹60,000-70,000/month (up from ₹11,472)</li>
+    </ul>
+  </div>
+
+  <div class="plan-card scale">
+    <h4 style="color: var(--green);">🌟 HERO #2: Creatives 2</h4>
+    <p style="margin-bottom: 10px;"><strong>CPL: ₹358 | Consistent performer</strong></p>
+    <ul>
+      <li><strong>Deploy in:</strong> ALL ad sets including Retargeting</li>
+      <li><strong>Why it works:</strong> Works across all geos. Best for warm audiences (retargeting)</li>
+      <li><strong>Action:</strong> Currently good volume in Chennai (₹10.8K, ₹320 CPL). Expand to other geos</li>
+      <li><strong>Budget share:</strong> ~₹50,000-60,000/month</li>
+    </ul>
+  </div>
+
+  <div class="plan-card optimize">
+    <h4 style="color: var(--yellow);">⚡ SUPPORT: Red land and Building</h4>
+    <p style="margin-bottom: 10px;"><strong>CPL: ₹428 | High CTR but inconsistent CPL</strong></p>
+    <ul>
+      <li><strong>Deploy in:</strong> Chennai + Thiruvallur ONLY (where CPL is ₹341-375)</li>
+      <li><strong>Remove from:</strong> Thiruninravur (CPL ₹690 — terrible)</li>
+      <li><strong>Why it works partially:</strong> Highest CTR (2.12%) means great attention-grabbing. But converts poorly in some geos</li>
+      <li><strong>Budget share:</strong> ~₹30,000-40,000/month</li>
+    </ul>
+  </div>
+
+  <div class="plan-card pause">
+    <h4 style="color: var(--red);">🛑 REDUCE: Ad 1 sanjay sami</h4>
+    <p style="margin-bottom: 10px;"><strong>CPL: ₹418 | Eating 57% of budget but above target</strong></p>
+    <ul>
+      <li><strong>Problem:</strong> This creative is consuming ₹85,618 (57% of total spend!) with CPL 20% above target</li>
+      <li><strong>Action:</strong> Do NOT use in the new plan. Meta is over-delivering to this ad because it's the oldest/most data-rich, not because it's the best</li>
+      <li><strong>Exception:</strong> If you want to keep testing, use it ONLY in Thiruvallur where CPL is ₹365</li>
+      <li><strong>Budget share:</strong> ₹0 (reallocate to Market Tamila Video + Creatives 2)</li>
+    </ul>
+  </div>
+
+  <div class="plan-card pause">
+    <h4 style="color: var(--red);">🛑 PAUSE: Ad 1 Creatives</h4>
+    <p style="margin-bottom: 10px;"><strong>CPL: ₹510 | Low volume, high cost</strong></p>
+    <ul>
+      <li><strong>Action:</strong> Pause immediately. Only 2 leads at ₹510 CPL</li>
+      <li><strong>Budget share:</strong> ₹0</li>
+    </ul>
+  </div>
+</div>
+
+<!-- AUDIENCE TARGETING -->
+<div class="section-title"><span class="emoji">👥</span> Audience Targeting Plan</div>
+
+<div class="plan-grid">
+  <div class="plan-card">
+    <h4>Chennai_Broad</h4>
+    <ul>
+      <li><strong>Location:</strong> 25km radius around Chennai city center</li>
+      <li><strong>Age:</strong> 25-55</li>
+      <li><strong>Gender:</strong> All (don't restrict — let algorithm optimize)</li>
+      <li><strong>Interests:</strong> Broad — let Advantage+ find the audience</li>
+      <li><strong>Exclusions:</strong> Existing leads, under 21, students</li>
+      <li><strong>Placements:</strong> Automatic (Feed + Stories + Reels)</li>
+    </ul>
+  </div>
+  <div class="plan-card">
+    <h4>Thiruvallur_Focused</h4>
+    <ul>
+      <li><strong>Location:</strong> Thiruvallur district + 15km buffer</li>
+      <li><strong>Age:</strong> 25-55</li>
+      <li><strong>Interests:</strong> Real estate, property investment, home loans, plot purchase</li>
+      <li><strong>Behavior:</strong> Engaged shoppers, frequent travelers</li>
+      <li><strong>Exclusions:</strong> Existing leads</li>
+      <li><strong>Why tighter:</strong> Closer to project = higher intent</li>
+    </ul>
+  </div>
+  <div class="plan-card">
+    <h4>Thiruninravur_Optimized</h4>
+    <ul>
+      <li><strong>Location:</strong> Thiruninravur + Avadi + Ambattur + Pattabiram (near TIDEL Park)</li>
+      <li><strong>Age:</strong> 25-50</li>
+      <li><strong>Interests:</strong> IT professionals, railway commuters, home construction</li>
+      <li><strong>Key hook:</strong> "2 mins from Veppampattu Railway Station" — commuter angle</li>
+      <li><strong>Exclusions:</strong> Existing leads</li>
+    </ul>
+  </div>
+  <div class="plan-card new">
+    <h4 style="color: var(--purple);">🆕 Avadi_Pattabiram_TIDEL (Replaces Chengalpattu)</h4>
+    <ul>
+      <li><strong>Location:</strong> Avadi + Ambattur + Pattabiram — 10-15km from Veppampattu</li>
+      <li><strong>Age:</strong> 25-50</li>
+      <li><strong>Why this geo:</strong> TIDEL Park Pattabiram is 15 min from Sereno. IT professionals here commute daily on this corridor. "2 mins from railway station" USP hits HARD</li>
+      <li><strong>Interests:</strong> IT professionals, software engineers, railway commuters, home construction, property investment</li>
+      <li><strong>Expected CPL:</strong> ₹250-350 (high relevance = high quality leads)</li>
+      <li><strong>Kill criteria:</strong> If CPL above ₹400 after 14 days → reallocate to Chennai/Thiruvallur</li>
+    </ul>
+  </div>
+  <div class="plan-card new">
+    <h4 style="color: var(--purple);">🆕 Poonamallee_Porur (Replaces Chengalpattu)</h4>
+    <ul>
+      <li><strong>Location:</strong> Poonamallee + Porur + Kundrathur — 15-20km from Veppampattu</li>
+      <li><strong>Age:</strong> 28-50</li>
+      <li><strong>Why this geo:</strong> Mid-income families priced out of Chennai city. Sereno's ₹1,840/sq ft vs ₹3,000+ market rate is a MASSIVE draw. These buyers actively seek affordable plots</li>
+      <li><strong>Interests:</strong> Real estate, home loans, plot purchase, land investment, family homes</li>
+      <li><strong>Expected CPL:</strong> ₹280-380 (price-conscious buyers respond well to "39% below market")</li>
+      <li><strong>Kill criteria:</strong> If CPL above ₹400 after 14 days → reallocate to Avadi-Pattabiram</li>
+    </ul>
+  </div>
+  <div class="plan-card new">
+    <h4 style="color: var(--purple);">🆕 Retargeting: Website Visitors</h4>
+    <ul>
+      <li><strong>Source:</strong> Facebook Pixel — visitors to propshell.com/sereno or sereno.propshell.com in last 30 days</li>
+      <li><strong>Expected CPL:</strong> ₹100-200 (warm audience)</li>
+      <li><strong>Creative priority:</strong> Creatives 2 (proven converter) + Market Tamila Video</li>
+      <li><strong>Frequency cap:</strong> Max 3x/week</li>
+    </ul>
+  </div>
+  <div class="plan-card new">
+    <h4 style="color: var(--purple);">🆕 Retargeting: Lead Form Openers</h4>
+    <ul>
+      <li><strong>Source:</strong> People who opened lead form but didn't submit (last 30 days)</li>
+      <li><strong>Expected CPL:</strong> ₹80-150 (highest intent)</li>
+      <li><strong>Creative priority:</strong> Creatives 2 with urgency angle</li>
+      <li><strong>This is FREE money:</strong> These people were interested but dropped off. Retargeting them will generate the cheapest leads</li>
+    </ul>
+  </div>
+</div>
+
+<!-- EXPECTED RESULTS -->
+<div class="section-title"><span class="emoji">📈</span> Expected Results After Implementing This Plan</div>
+
+<div class="kpi-grid">
+  <div class="kpi-card" style="border: 1px solid var(--green);">
+    <div class="label">Projected CPL</div>
+    <div class="value good">₹280-320</div>
+    <div class="bench bg-good">Down from ₹404 (30% improvement)</div>
+  </div>
+  <div class="kpi-card" style="border: 1px solid var(--green);">
+    <div class="label">Projected Leads/Month</div>
+    <div class="value good">625-715</div>
+    <div class="bench bg-good">Up from 372 (70-90% increase)</div>
+  </div>
+  <div class="kpi-card" style="border: 1px solid var(--green);">
+    <div class="label">Projected CTR</div>
+    <div class="value good">1.5-2.0%</div>
+    <div class="bench bg-good">Up from 1.21%</div>
+  </div>
+  <div class="kpi-card" style="border: 1px solid var(--green);">
+    <div class="label">Projected Frequency</div>
+    <div class="value good">1.2-1.8</div>
+    <div class="bench bg-good">Down from 2.45 (healthy range)</div>
+  </div>
+</div>
+
+<div class="alert alert-good">
+  <h4>💡 Why These Numbers Are Realistic</h4>
+  <p>
+    By shifting 57% of budget FROM "Ad 1 sanjay sami" (₹418 CPL) TO "Market Tamila Video" (₹337 CPL) and "Creatives 2" (₹358 CPL), PLUS adding retargeting (₹80-200 CPL), the blended CPL drops significantly. The retargeting campaign alone at ₹35K/month should generate 175-250 leads at ₹140-200 CPL, which pulls the entire average down.
+  </p>
+</div>
+
+<!-- 7-STEP IMPLEMENTATION -->
+<div class="section-title"><span class="emoji">⚡</span> 8-Step Implementation Checklist — Do This TODAY</div>
+
+<div class="action-list">
+  <div class="action-item critical">
+    <div class="action-num">1</div>
+    <div>
+      <strong>KILL entire Chengalpattu ad set + PAUSE "Ad 1 Creatives"</strong> — Chengalpattu is 60km from Veppampattu. These leads will never convert. Pause ALL ads running in Chengalpattu immediately. Also pause "Ad 1 Creatives" (₹510 CPL, 2 leads).
+    </div>
+  </div>
+  <div class="action-item critical">
+    <div class="action-num">2</div>
+    <div>
+      <strong>PAUSE "Red land and Building" in Thiruninravur</strong> — ₹690 CPL is 2x your target. This single ad wasted ~₹9,667 in 30 days for only 14 leads. Toggle it OFF immediately.
+    </div>
+  </div>
+  <div class="action-item high">
+    <div class="action-num">3</div>
+    <div>
+      <strong>Create Campaign 3: Retargeting</strong> — Go to Ads Manager → Create New Campaign → Leads → Name: "SERENO_Retargeting" → Create 2 ad sets: (1) Website visitors last 30 days, (2) Lead form openers who didn't submit. Use "Creatives 2" + "Market Tamila Video". Set ₹1,167/day budget.
+    </div>
+  </div>
+  <div class="action-item high">
+    <div class="action-num">4</div>
+    <div>
+      <strong>Reduce "Ad 1 sanjay sami" budget share</strong> — This creative eats 57% of budget at ₹418 CPL. Pause it everywhere except Thiruvallur (₹365 CPL). Do NOT use in the new Avadi-Pattabiram or Poonamallee-Porur ad sets.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">5</div>
+    <div>
+      <strong>Increase "Market Tamila Video" delivery</strong> — This is your best creative but only got ₹11K spend in 30 days. Duplicate it to all ad sets. It should be getting 40%+ of impressions. If Meta isn't delivering it enough, create a new ad set with ONLY this video.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">6</div>
+    <div>
+      <strong>Create Campaign 2: New High-Quality Geos</strong> — Create 2 new ad sets: (1) Avadi_Pattabiram_TIDEL targeting IT professionals near TIDEL Park at ₹800/day, (2) Poonamallee_Porur targeting price-sensitive families at ₹700/day. Use "Market Tamila Video" + "Creatives 2" only. These geos are 10-20km from Sereno = high quality leads.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">7</div>
+    <div>
+      <strong>Set up the 3-campaign structure within 7 days</strong> — Don't kill the existing campaign abruptly. Create the new campaigns alongside, let them exit learning phase (50 leads each), then gradually shift budget from old → new over 5-7 days.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">8</div>
+    <div>
+      <strong>Set kill criteria for new geos</strong> — Give Avadi-Pattabiram and Poonamallee-Porur 14 days each. If CPL stays above ₹400 after 14 days → pause and reallocate budget to Chennai + Thiruvallur (proven winners).
+    </div>
+  </div>
+</div>
+
+<!-- WEEKLY OPTIMIZATION SCHEDULE -->
+<div class="section-title"><span class="emoji">📅</span> Weekly Optimization Schedule</div>
+
+<table>
+  <thead>
+    <tr><th>Day</th><th>Task</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Monday</strong></td><td>Weekly Review</td><td>Pull last 7-day data. Compare CPL, CTR, frequency to benchmarks. Flag any ad with CPL &gt; ₹400 for 3+ consecutive days.</td></tr>
+    <tr><td><strong>Tuesday</strong></td><td>Creative Health</td><td>Check frequency on each creative. If any creative hits frequency &gt; 2.0, reduce its budget share. Check for ad fatigue signals (rising CPC + declining CTR).</td></tr>
+    <tr><td><strong>Wednesday</strong></td><td>Budget Reallocation</td><td>Move 10-20% budget from worst-performing ad set to best-performing. Never change budgets by more than 30% at once.</td></tr>
+    <tr><td><strong>Thursday</strong></td><td>Audience Check</td><td>Review audience overlap using Meta's Audience Overlap tool. Ensure retargeting audiences are excluded from prospecting campaigns.</td></tr>
+    <tr><td><strong>Friday</strong></td><td>Lead Quality Check</td><td>Check with sales team: How many leads from this week answered calls? What's the qualified lead ratio? Which ad set sends the best quality leads?</td></tr>
+    <tr><td><strong>Saturday</strong></td><td>Weekend Scaling</td><td>If CPL drops on weekends (common for real estate), increase budgets by 20% for Saturday-Sunday. Real estate leads often browse on weekends.</td></tr>
+    <tr><td><strong>Sunday</strong></td><td>Next Week Planning</td><td>Prep for Monday review. Note any creative that needs refreshing. Plan any new test angles for the coming week.</td></tr>
+  </tbody>
+</table>
+
+<!-- SCALING RULES -->
+<div class="section-title"><span class="emoji">📏</span> Scaling Rules — When to Increase Budget</div>
+
+<div class="plan-grid">
+  <div class="plan-card scale">
+    <h4 style="color: var(--green);">✅ SCALE (Increase 20-30%)</h4>
+    <ul>
+      <li>CPL below ₹300 for 5+ consecutive days</li>
+      <li>CTR above 1.5% and stable</li>
+      <li>Frequency below 1.8</li>
+      <li>At least 20+ leads in the last 7 days</li>
+      <li><strong>How:</strong> Increase daily budget by 20%. Wait 3-5 days. Repeat if metrics hold.</li>
+    </ul>
+  </div>
+  <div class="plan-card optimize">
+    <h4 style="color: var(--yellow);">⚠️ HOLD (Keep Current Budget)</h4>
+    <ul>
+      <li>CPL between ₹300-400</li>
+      <li>CTR between 1.0-1.5%</li>
+      <li>Frequency between 1.5-2.0</li>
+      <li>Leads are steady but not exceptional</li>
+      <li><strong>How:</strong> Monitor daily. Don't touch budget. Focus on creative testing.</li>
+    </ul>
+  </div>
+  <div class="plan-card pause">
+    <h4 style="color: var(--red);">🛑 CUT (Reduce or Pause)</h4>
+    <ul>
+      <li>CPL above ₹500 for 3+ days</li>
+      <li>CTR below 0.8%</li>
+      <li>Frequency above 2.5</li>
+      <li>Zero leads in 3+ consecutive days</li>
+      <li><strong>How:</strong> Reduce budget by 50% immediately. If no improvement in 3 days → pause.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- NAMING CONVENTION -->
+<div class="section-title"><span class="emoji">🏷️</span> Naming Convention for New Campaigns</div>
+
+<table>
+  <thead><tr><th>Level</th><th>Format</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td>Campaign</td><td>SERENO_[Objective]_[Funnel]</td><td>SERENO_LeadGen_TopPerformers</td></tr>
+    <tr><td>Ad Set</td><td>[Geo]_[AudienceType]_[Date]</td><td>Chennai_Broad_Apr2026</td></tr>
+    <tr><td>Ad</td><td>[CreativeName]_[Format]_[Version]</td><td>MarketTamilaVideo_Video_V1</td></tr>
+  </tbody>
+</table>
+
+<!-- FOOTER -->
+<div style="text-align: center; padding: 40px 0 20px; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text2);">
+  <p>Sereno Meta Ads Plan — Generated by Performance Marketing AI Specialist</p>
+  <p style="color: var(--cyan); font-size: 0.9em;">Budget: ₹2,00,000/month | Target CPL: ₹280-320 | Creatives: Existing Only</p>
+  <p style="font-size: 0.8em; margin-top: 10px;">Propshell | Sereno Villa Plots | Veppampattu, Chennai</p>
+</div>
+
+</div>
+
+<!-- CHARTS JS -->
+<script>
+const chartDefaults = { color: '#9e9e9e', borderColor: '#2a2e3a' };
+Chart.defaults.color = chartDefaults.color;
+Chart.defaults.borderColor = chartDefaults.borderColor;
+
+// CPL by Ad Set
+new Chart(document.getElementById('cplAdsetChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Chennai', 'Thiruvallur', 'Thiruninravur', 'Chengalpattu (KILLED)'],
+    datasets: [{
+      label: 'CPL (₹)',
+      data: [353, 378, 467, 442],
+      backgroundColor: ['#00e676', '#448aff', '#ff9100', '#ff5252'],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      annotation: {}
+    },
+    scales: { y: { beginAtZero: true, grid: { color: '#1a1d27' } } }
+  }
+});
+
+// Spend by Creative
+new Chart(document.getElementById('spendCreativeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Ad 1 sanjay sami (57%)', 'Red land & Building (22%)', 'Creatives 2 (13%)', 'Market Tamila Video (8%)'],
+    datasets: [{
+      data: [85618, 32971, 19319, 11472],
+      backgroundColor: ['#ff5252', '#ff9100', '#00e676', '#18ffff'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    plugins: { legend: { position: 'bottom' } },
+    cutout: '65%'
+  }
+});
+
+// Leads by Ad Set
+new Chart(document.getElementById('leadsAdsetChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Chennai', 'Thiruvallur', 'Thiruninravur', 'Chengalpattu (KILLED)'],
+    datasets: [{
+      label: 'Leads',
+      data: [118, 88, 85, 81],
+      backgroundColor: ['#00e676', '#448aff', '#ff9100', '#ff5252'],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: '#1a1d27' } } }
+  }
+});
+
+// CPL by Creative
+new Chart(document.getElementById('cplCreativeChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Market Tamila\nVideo', 'Creatives 2', 'Ad 1 sanjay\nsami', 'Red land &\nBuilding', 'Ad 1\nCreatives'],
+    datasets: [{
+      label: 'CPL (₹)',
+      data: [337, 358, 418, 428, 510],
+      backgroundColor: ['#00e676', '#00e676', '#ff9100', '#ff9100', '#ff5252'],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: { x: { beginAtZero: true, grid: { color: '#1a1d27' } } }
+  }
+});
+</script>
+</body>
+</html>
